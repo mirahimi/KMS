@@ -6,7 +6,7 @@ body {
 .content {
     margin: 70px auto;
     width: 400px; /* Set the width of the rectangle */
-    height: 300px; /* Adjust height to fit content */
+    height: 350px; /* Adjust height to fit content */
     padding: 5px;
     border: 2px solid #000; /* Add border style */
     border-radius: 5px;
