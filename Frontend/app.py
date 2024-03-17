@@ -54,14 +54,19 @@ def login():
     else:
         return redirect('/')
 
+@app.route('/confirm', methods=['POST'])
+def confirm():
+    selected_room = request.form['room']
+    return f'Your choice is: {selected_room}'
+
 @app.route('/pin', methods=['GET', 'POST'])
 def pin_page():
     if request.method == 'POST':
         username = request.form['userID']
         pin = request.form['pin']
         if check_pin(username, pin):
-
-            return render_template('welcome.html', username=username)
+             return render_template('keys.html')
+#            return render_template('welcome.html', username=username)
         else:
             return redirect('/pin')
     else:
