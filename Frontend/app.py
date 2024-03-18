@@ -1,10 +1,13 @@
+# This is the file that needs to be run in order to run the KMS Application
+
 from flask import Flask, render_template, request, redirect
 import sqlite3
 
+# Initialize a Flash Application
 app = Flask(__name__)
 
 
-# Function to create database and table if they don't exist
+# Function: Create Database and Table
 def create_table():
     conn = sqlite3.connect('users.db')
     c = conn.cursor()
@@ -13,8 +16,7 @@ def create_table():
     conn.commit()
     conn.close()
 
-
-# Function to insert user credentials into the database
+# Function: Insert User Credentials into the database
 def insert_user(username, password, pin):
     conn = sqlite3.connect('users.db')
     c = conn.cursor()
@@ -22,7 +24,7 @@ def insert_user(username, password, pin):
     conn.commit()
     conn.close()
 
-# Function to check if user credentials are valid
+# Function: Check if User Credentials are valid
 def check_credentials(username, password):
     conn = sqlite3.connect('users.db')
     c = conn.cursor()
@@ -31,7 +33,7 @@ def check_credentials(username, password):
     conn.close()
     return result is not None
 
-# Function to check if user PIN is valid
+# Function: Check if User PIN is valid
 def check_pin(username, pin):
     conn = sqlite3.connect('users.db')
     c = conn.cursor()
@@ -40,42 +42,45 @@ def check_pin(username, pin):
     conn.close()
     return result is not None
 
+# Route for Login Page
 @app.route('/')
 def login_page():
     return render_template('login_page.html')
 
+# Route for handling Login Credentials: 1st Authentication
 @app.route('/login', methods=['POST'])
 def login():
-    username = request.form['userID']
-    password = request.form['password']
+
+    username = request.form['userID']     # Extract Username from the form submitted  
+    password = request.form['password']   # Extract Password from the form submitted
     
     if check_credentials(username, password):
-        return redirect('/pin')
+        return redirect('/pin')           # If Valid Credentials, redirect to the Pin Page
     else:
-        return redirect('/')
+        return redirect('/')              # If Invalid Credentials, redirect back to Login Page
 
-@app.route('/confirm', methods=['POST'])
-def confirm():
-    selected_room = request.form['room']
-    return f'Your choice is: {selected_room}'
-
+# Route for handling Pin Credentials: 2nd Authentication
 @app.route('/pin', methods=['GET', 'POST'])
 def pin_page():
     if request.method == 'POST':
         username = request.form['userID']
         pin = request.form['pin']
         if check_pin(username, pin):
-             return render_template('keys.html')
-#            return render_template('welcome.html', username=username)
+             return render_template('keys.html') # If Valid Credentials, render 'Keys' HTML Template
         else:
-            return redirect('/pin')
+            return redirect('/pin')              # If Invalid Credentials, redirect to the Pin Page
     else:
-        return render_template('pin_page.html')
+        return render_template('pin_page.html')  # If it's a GET request, render the PIN Page
 
+# Route for Confirming User's Selection
+@app.route('/confirm', methods=['POST'])
+def confirm():
+    selected_room = request.form['room']         # Extract selected room from the form submitted
+    return f'Your choice is: {selected_room}'
 
+# Main block to execute when this script is run
 if __name__ == '__main__':
-    create_table()  # Create table if it doesn't exist
-    # Insert sample user data (for demonstration purposes)
-    insert_user('user1', 'abc', '123')
+    create_table()                               # Create table if it doesn't exist
+    insert_user('user1', 'abc', '123')           # Insert sample user data (for demonstration purposes)
     insert_user('user2', 'xyz', '789')
-    app.run(debug=True)
+    app.run(debug=True)                          # Run Flask App in Debug Mode
