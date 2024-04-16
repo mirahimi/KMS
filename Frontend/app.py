@@ -59,6 +59,26 @@ def login():
     else:
         return redirect('/')              # If Invalid Credentials, redirect back to Login Page
 
+# Route for handling "Home" button click
+@app.route('/home', methods=['POST','GET'])
+def home():
+    # Handle the "Home" button action here
+    return redirect('/')  # For now, redirect back to the login page
+
+# Route for handling User Registration Form Submission
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        pin = request.form['pin']
+        insert_user(username, password, pin)
+        return redirect('/')
+    else:
+        # Handle GET request, maybe render a registration form here
+        return render_template('registration_page.html')
+
+
 # Route for handling Pin Credentials: 2nd Authentication
 @app.route('/pin', methods=['GET', 'POST'])
 def pin_page():

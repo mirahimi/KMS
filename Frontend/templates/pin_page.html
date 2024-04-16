@@ -44,8 +44,38 @@
             height: auto; /* Let the height adjust automatically */
         }
         .submit-container {
-            margin-top: 20px;
+            display: inline-block;
+            padding: 2px 3px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            margin-right: 3px;
         }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .home-button {
+            display: inline-block;
+            padding: 2px 3px;
+            font-size: 16px;
+            background-color: #c9c927;
+            color: white;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            margin-right: 3px;
+        }
+
     </style>
 </head>
 
@@ -56,6 +86,7 @@
             <h1>MSU's <br> Key Management System </h1>
             <img src="{{ url_for('static', filename='kms_logo.png') }}" alt="kms_logo" class="kms_logo">
         </div>
+        
         <div class="middle">
             <form action="/pin" method="POST"> 
                 <div class="input-container">
@@ -66,10 +97,19 @@
                     <label for="pin">Pin:</label>
                     <input type="password" id="pin" name="pin" autocomplete="off">
                 </div>
+                
+                <div class="button-container">
+
                 <div class="input-container submit-container">
-                    <input type="submit" value="Login">
+                    <input type="submit" value="Login" class="submit-container">
                 </div>
             </form>
+
+            <div class="input-container home-button">
+                <form action="/home" method="GET">
+                    <input type="submit" value="Home" class="home-button">
+                </form>
+            </div>
         </div>
     </div>
 </body>
