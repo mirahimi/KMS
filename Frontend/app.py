@@ -100,9 +100,12 @@ def confirm():
     key = request.form['key']
     
     # Process the selected housing, room, and key options
-    selection = f"You have selected {housing}, {room}, and {key}."
+    selection = f"<b>You have selected:</b> <br/> \
+                 <b>Housing:</b> {housing}<br/> \
+                 <b>Room:</b> {room}<br/> \
+                 <b>Key:</b> {key}"
     
-    # Render a new template or return the selection as a response
+        # Render a new template or return the selection as a response
     return selection
 
 
