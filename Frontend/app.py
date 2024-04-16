@@ -7,7 +7,7 @@ import sqlite3
 app = Flask(__name__)
 
 
-# Function: Create Database and Table
+# Function: Create User Database and Table
 def create_table():
     conn = sqlite3.connect('users.db')
     c = conn.cursor()
