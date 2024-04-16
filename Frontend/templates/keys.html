@@ -21,6 +21,9 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add shadow */
             width: 400px; /* Set width */
             max-width: 100%; /* Limit to viewport width */
+            display: flex; /* Use flexbox for centering */
+            flex-direction: column; /* Stack children vertically */
+            align-items: center; /* Center children horizontally */
         }
         .logo-container {
             display: flex;
@@ -33,12 +36,27 @@
             height: auto; /* Let the height adjust automatically */
         }
         h1 {
-            font-size: 20px; /* Adjust font size as needed */
+            font-size: 24px; /* Adjust font size as needed */
             text-align: center; /* Center the Welcome sign */
             color: blue; /* Change font color to blue */
             font-style: italic;
-            flex-grow: 1; /* Allow the text to grow and fill available space */
             margin: 0; /* Remove default margin */
+        }
+        label {
+            margin-bottom: 10px; /* Add margin below labels */
+        }
+        button {
+            margin-top: 25px; /* Add margin to the top of the button */
+            margin-left: 80px; /* Add margin to the top of the button */
+            background-color: rgba(37, 4, 114, 0.571); /* Set button background color */
+            color: white; /* Set button text color */
+            padding: 10px 15px; /* Add padding to the button */
+            border: none; /* Remove button border */
+            border-radius: 5px; /* Add button border radius */
+            cursor: pointer; /* Change cursor to pointer on hover */
+        }
+        .submit-container {
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -49,62 +67,113 @@
             <h1>MSU's <br> Key Management System </h1>
             <img src="{{ url_for('static', filename='kms_logo.png') }}" alt="kms_logo" class="kms_logo">
         </div>
-        <form action="/confirm" method="post">
-            <label for="housingOptions">Select Housing:</label>
-            <select id="housingOptions" name="housing">
-                <option value="killingsworth">Killingsworth Hall</option>
-                <option value="legacy">Legacy Hall</option>
-                <option value="sundance">Sundance Apartments</option>
-            </select>
-            
-            <div id="roomOptions" style="display:none;">
-                <label for="roomSelect">Select Room:</label>
-                <select id="roomSelect" name="room">
-                    <option value="">Select Room</option>
-                </select>
-            </div>
-            
-            <button type="submit">Confirm Choice</button>
-        </form>
 
-        <script>
-            document.getElementById("housingOptions").addEventListener("change", function() {
-                var housingSelect = document.getElementById("housingOptions");
-                var roomSelect = document.getElementById("roomSelect");
+        <div class="middle">
+            <form action="/confirm" method="post">
+                <label for="housingOptions">Select Building:</label>
+                <select id="housingOptions" name="housing">
+                    <option value="" selected>Select Housing</option>
+                    <option value="Killingsworth Hall">Killingsworth Hall</option>
+                    <option value="McCullough-Trigg Hall">McCullough-Trigg Hall</option>
+                    <option value="Legacy Hall">Legacy Hall</option>
+                    <option value="Sunwatcher Apartments">Sunwatcher Apartments</option>
+                    <option value="Sundance Apartments">Sundance Apartments</option>
+                </select>
                 
-                // Clear previous options
-                roomSelect.innerHTML = "<option value=''>Select Room</option>";
+                <div id="roomOptions" style="display:none;">
+                    <label for="roomSelect">Select Room:</label>
+                    <select id="roomSelect" name="room" style="margin-left: 17px; margin-top: 10px;">
+                        <option value="">Select Room</option>
+                    </select>
+                </div>
+
+                <div id="keyOptions" style="display:none;">
+                    <label for="keySelect">Select Key:</label>
+                    <select id="keySelect" name="key" style="margin-left: 29px; margin-top: 10px;">
+                        <option value="">Select Key</option>
+                        <option value="Key 1">Key 1</option>
+                        <option value="Key 2">Key 2</option>
+                        <option value="Key 3">Key 3</option>
+                    </select>
+                </div>
+
+
+                <div class="input-container submit-container">
+                    <button type="submit">Confirm Choice</button>
+                </div>
                 
-                if (housingSelect.value === "killingsworth") {
-                    // Show room options for Killingsworth Hall
-                    for (var i = 100; i <= 110; i++) {
-                        var option = document.createElement("option");
-                        option.text = "KW " + i;
-                        option.value = "KW" + i;
-                        roomSelect.appendChild(option);
+            </form>
+
+
+            <script>
+                document.getElementById("housingOptions").addEventListener("change", function() {
+                    var housingSelect = document.getElementById("housingOptions");
+                    var roomSelect = document.getElementById("roomSelect");
+                    
+                    // Clear previous options
+                    roomSelect.innerHTML = "<option value=''>Select Room</option>";
+                    
+                    if (housingSelect.value === "Killingsworth Hall") {
+                        // Show room options for Killingsworth Hall
+                        for (var i = 100; i <= 105; i++) {
+                            var option = document.createElement("option");
+                            option.text = "KW " + i;
+                            option.value = "KW" + i;
+                            roomSelect.appendChild(option);
+                        }
+                    } else if (housingSelect.value === "McCullough-Trigg Hall") {
+                        // Show room options for McCullough-Trigg Hall
+                        for (var i = 100; i <= 105; i++) {
+                            var option = document.createElement("option");
+                            option.text = "Trig " + i;
+                            option.value = "Trig" + i;
+                            roomSelect.appendChild(option);
+                        }
+                    } else if (housingSelect.value === "Legacy Hall") {
+                        // Show room options for Legacy Hall
+                        for (var i = 100; i <= 105; i++) {
+                            var option = document.createElement("option");
+                            option.text = "Legacy " + i;
+                            option.value = "Legacy" + i;
+                            roomSelect.appendChild(option);
+                        }
+                    } else if (housingSelect.value === "Sunwatcher Apartments") {
+                        // Show room options for Sunwatcher Apartments
+                        for (var i = 1; i <= 10; i++) {
+                            var option = document.createElement("option");
+                            option.text = "SW " + i;
+                            option.value = "SW" + i;
+                            roomSelect.appendChild(option);
+                        }
+                    } else if (housingSelect.value === "Sundance Apartments") {
+                        // Show room options for Sundance Apartments
+                        for (var i = 1; i <= 10; i++) {
+                            var option = document.createElement("option");
+                            option.text = "SDC " + i;
+                            option.value = "SDC" + i;
+                            roomSelect.appendChild(option);
+                        }
                     }
-                } else if (housingSelect.value === "legacy") {
-                    // Show room options for Legacy Hall
-                    for (var i = 200; i <= 210; i++) {
-                        var option = document.createElement("option");
-                        option.text = "Legacy " + i;
-                        option.value = "Legacy" + i;
-                        roomSelect.appendChild(option);
+                    
+                    // Show room selection
+                    document.getElementById("roomOptions").style.display = "block";
+                    document.getElementById("keyOptions").style.display = "none"; // Hide key options initially
+                });
+
+                document.getElementById("roomSelect").addEventListener("change", function() {
+                    var roomSelect = document.getElementById("roomSelect");
+                    
+                    // Show key options if a room is selected
+                    if (roomSelect.value !== "") {
+                        document.getElementById("keyOptions").style.display = "block";
+                    } else {
+                        document.getElementById("keyOptions").style.display = "none";
                     }
-                } else if (housingSelect.value === "sundance") {
-                    // Show room options for Sundance Apartments
-                    for (var i = 1; i <= 10; i++) {
-                        var option = document.createElement("option");
-                        option.text = "Apartment " + i;
-                        option.value = "Apartment" + i;
-                        roomSelect.appendChild(option);
-                    }
-                }
-                
-                // Show room selection
-                document.getElementById("roomOptions").style.display = "block";
-            });
-        </script>
+                });
+
+
+            </script>
+        </div>
     </div>
 </body>
 </html>

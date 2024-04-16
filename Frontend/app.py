@@ -95,8 +95,18 @@ def pin_page():
 # Route for Confirming User's Selection
 @app.route('/confirm', methods=['POST'])
 def confirm():
-    selected_room = request.form['room']         # Extract selected room from the form submitted
-    return f'Your choice is: {selected_room}'
+    housing = request.form['housing']
+    room = request.form['room']
+    key = request.form['key']
+    
+    # Process the selected housing, room, and key options
+    selection = f"You have selected {housing}, {room}, and {key}."
+    
+    # Render a new template or return the selection as a response
+    return selection
+
+
+
 
 # Main block to execute when this script is run
 if __name__ == '__main__':
