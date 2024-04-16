@@ -104,3 +104,5 @@ if __name__ == '__main__':
     insert_user('user1', 'abc', '123')           # Insert sample user data (for demonstration purposes)
     insert_user('user2', 'xyz', '789')
     app.run(debug=True)                          # Run Flask App in Debug Mode
+
+# Hello!
