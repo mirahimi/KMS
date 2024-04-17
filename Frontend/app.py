@@ -125,6 +125,12 @@ def confirm():
 # Main block to execute when this script is run
 if __name__ == '__main__':
     create_table()                               # Create table if it doesn't exist
-    insert_user('user1', 'abc', '123')           # Insert sample user data (for demonstration purposes)
-    insert_user('user2', 'xyz', '789')
+    insert_user('chintan', 'admin', '123')       # Insert sample user data
+    insert_user('sly', 'admin', '456')
+    insert_user('m1', 'p1', '111') 
+    insert_user('m2', 'p2', '222')
+    insert_user('m3', 'p3', '333')
+    insert_user('m4', 'p4', '444')
+    insert_user('m5', 'p5', '555')
+
     app.run(debug=True)                          # Run Flask App in Debug Mode
