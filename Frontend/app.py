@@ -11,18 +11,29 @@ app = Flask(__name__)
 def create_table():
     conn = sqlite3.connect('users.db')
     c = conn.cursor()
-    c.execute('''CREATE TABLE IF NOT EXISTS users
-                 (id INTEGER PRIMARY KEY, username TEXT, password TEXT, pin TEXT)''')
-    conn.commit()
+    # Check if the table already exists
+    c.execute('''SELECT count(name) FROM sqlite_master WHERE type='table' AND name='users' ''')
+    # If the table doesn't exist, create it
+    if c.fetchone()[0] != 1:
+        c.execute('''CREATE TABLE users
+                     (id INTEGER PRIMARY KEY, username TEXT, password TEXT, pin TEXT)''')
+        conn.commit()
     conn.close()
+
 
 # Function: Insert User Credentials into the database
 def insert_user(username, password, pin):
     conn = sqlite3.connect('users.db')
     c = conn.cursor()
-    c.execute("INSERT INTO users (username, password, pin) VALUES (?, ?, ?)", (username, password, pin))
-    conn.commit()
+    # Check if the user already exists
+    c.execute("SELECT * FROM users WHERE username = ?", (username,))
+    result = c.fetchone()
+    # If the user does not exist, insert it
+    if result is None:
+        c.execute("INSERT INTO users (username, password, pin) VALUES (?, ?, ?)", (username, password, pin))
+        conn.commit()
     conn.close()
+
 
 # Function: Check if User Credentials are valid
 def check_credentials(username, password):
