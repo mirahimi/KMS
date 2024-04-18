@@ -21,7 +21,7 @@ def create_table():
     conn.close()
 
 
-
+test
 
 # Function: Insert User Credentials into the database
 def insert_user(username, password, pin):
