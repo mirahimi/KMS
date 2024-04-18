@@ -7,8 +7,13 @@ import sqlite3
 app = Flask(__name__)
 
 
+#-----------------------------------------// 
+# USER FUNCTIONS ONLY
+#-----------------------------------------//
+
+
 # Function: Create User Database and Table
-def create_table():
+def create_user_table():
     conn = sqlite3.connect('users.db')
     c = conn.cursor()
     # Check if the table already exists
@@ -19,9 +24,6 @@ def create_table():
                      (id INTEGER PRIMARY KEY, username TEXT, password TEXT, pin TEXT)''')
         conn.commit()
     conn.close()
-
-
-test
 
 # Function: Insert User Credentials into the database
 def insert_user(username, password, pin):
@@ -54,6 +56,52 @@ def check_pin(username, pin):
     result = c.fetchone()
     conn.close()
     return result is not None
+
+#-------------------------------------------//
+# KEY FUNCTIONS ONLY
+#-------------------------------------------//
+
+# Function: Create Key Database and Table
+def create_key_table():
+    conn = sqlite3.connect('keys.db')
+    c = conn.cursor()
+    c.execute('''SELECT count(name) FROM sqlite_master WHERE type='table' AND name='keys' ''')
+    # If the table doesn't exist, create it
+    if c.fetchone()[0] != 1:
+        c.execute('''CREATE TABLE keys
+                     (keyCode INTEGER, keyNum INTEGER, buildingCode TEXT, building TEXT, roomNum INTEGER, checkedStatus TEXT, authorization INTEGER)''')
+        conn.commit()
+    conn.close()
+
+# Function: Insert keys into the database
+
+def insert_kw_keys():
+    conn = sqlite3.connect('keys.db')
+    c = conn.cursor()
+
+    keyCodes = range(300, 311)
+    keyNums = range(1, 4)
+    buildingCodes = 'HA'
+    buildings = 'Killingsworth Hall'
+    roomNums = range(100, 111)
+    checkedStatus = 'Checked In'
+    authorization = 1
+
+    for keyCode in keyCodes:
+        for keyNum in keyNums:
+            for buildingCode in buildingCodes:
+                for building in buildings:
+                    for roomNum in roomNums:
+                        c.execute("INSERT INTO keys VALUES (?, ?, ?, ?, ?, ?, ?)",
+                            (keyCode, keyNum, str(buildingCode), str(building), roomNum, checkedStatus, authorization))
+
+    conn.commit()
+    conn.close()
+
+
+#-----------------------------------//
+# WEB FUNCTIONS ONLY
+#-----------------------------------//
 
 # Route for Login Page
 @app.route('/')
@@ -126,7 +174,8 @@ def confirm():
 
 # Main block to execute when this script is run
 if __name__ == '__main__':
-    create_table()                               # Create table if it doesn't exist
+    create_user_table()                          # Create user table if it doesn't exist
+    create_key_table()                           # Create key table if it doesn't exist
     insert_user('chintan', 'admin', '123')       # Insert sample user data
     insert_user('sly', 'admin', '456')
     insert_user('m1', 'p1', '111') 
@@ -134,5 +183,6 @@ if __name__ == '__main__':
     insert_user('m3', 'p3', '333')
     insert_user('m4', 'p4', '444')
     insert_user('m5', 'p5', '555')
+    insert_kw_keys()
 
     app.run(debug=True)                          # Run Flask App in Debug Mode
