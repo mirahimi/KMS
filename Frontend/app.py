@@ -21,6 +21,8 @@ def create_table():
     conn.close()
 
 
+
+
 # Function: Insert User Credentials into the database
 def insert_user(username, password, pin):
     conn = sqlite3.connect('users.db')
