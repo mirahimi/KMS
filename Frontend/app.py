@@ -2,6 +2,7 @@
 
 from flask import Flask, render_template, request, redirect
 import sqlite3
+import datetime
 
 # Initialize a Flash Application
 app = Flask(__name__)
@@ -73,11 +74,14 @@ def create_key_table():
         conn.commit()
     conn.close()
 
-# Function: Insert keys into the database
-
+# MULTIPLE KEY FUNCTIONS
+# Functions: Insert keys into the database
 def insert_kw_keys():
     conn = sqlite3.connect('keys.db')
     c = conn.cursor()
+
+    audit_conn = sqlite3.connect('audit.db')
+    audit_c = audit_conn.cursor()
 
     keyNums = range(1,4)
     buildingCodes = ['HA']
@@ -92,14 +96,22 @@ def insert_kw_keys():
         for keyNum in keyNums:
             for buildingCode in buildingCodes:
                 for building in buildings:
+
                     # Check if the key already exists
                     c.execute("SELECT * FROM keys WHERE building = ? AND roomNum = ? AND buildingCode = ? AND keyCode = ? AND keyNum = ?",
                         (str(building), roomNum, str(buildingCode), keyCode, keyNum))
                     result = c.fetchone()
+
                     # If the key does not exist, insert it
                     if result is None:
                         c.execute("INSERT INTO keys VALUES (?, ?, ?, ?, ?, ?, ?)",
                             (str(building), roomNum, str(buildingCode), keyCode, keyNum, checkedStatus, authorization))
+                    else:
+
+                        # If the checkedStatus has changed, insert a record into audit.db
+                        if result[5] != checkedStatus:
+                            audit_c.execute("INSERT INTO audit VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                                (str(building), roomNum, str(buildingCode), keyCode, keyNum, checkedStatus, authorization, datetime.datetime.now()))
 
     conn.commit()
     conn.close()
@@ -107,6 +119,9 @@ def insert_kw_keys():
 def insert_lh_keys():
     conn = sqlite3.connect('keys.db')
     c = conn.cursor()
+
+    audit_conn = sqlite3.connect('audit.db')
+    audit_c = audit_conn.cursor()
 
     keyNums = range(1,4)
     buildingCodes = ['HE']
@@ -121,14 +136,22 @@ def insert_lh_keys():
         for keyNum in keyNums:
             for buildingCode in buildingCodes:
                 for building in buildings:
+
                     # Check if the key already exists
                     c.execute("SELECT * FROM keys WHERE building = ? AND roomNum = ? AND buildingCode = ? AND keyCode = ? AND keyNum = ?",
                         (str(building), roomNum, str(buildingCode), keyCode, keyNum))
                     result = c.fetchone()
+
                     # If the key does not exist, insert it
                     if result is None:
                         c.execute("INSERT INTO keys VALUES (?, ?, ?, ?, ?, ?, ?)",
                             (str(building), roomNum, str(buildingCode), keyCode, keyNum, checkedStatus, authorization))
+                    else:
+
+                        # If the checkedStatus has changed, insert a record into audit.db
+                        if result[5] != checkedStatus:
+                            audit_c.execute("INSERT INTO audit VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                                (str(building), roomNum, str(buildingCode), keyCode, keyNum, checkedStatus, authorization, datetime.datetime.now()))
 
     conn.commit()
     conn.close()
@@ -136,6 +159,9 @@ def insert_lh_keys():
 def insert_mt_keys():
     conn = sqlite3.connect('keys.db')
     c = conn.cursor()
+
+    audit_conn = sqlite3.connect('audit.db')
+    audit_c = audit_conn.cursor()
 
     keyNums = range(1,4)
     buildingCodes = ['CA']
@@ -154,10 +180,17 @@ def insert_mt_keys():
                     c.execute("SELECT * FROM keys WHERE building = ? AND roomNum = ? AND buildingCode = ? AND keyCode = ? AND keyNum = ?",
                         (str(building), roomNum, str(buildingCode), keyCode, keyNum))
                     result = c.fetchone()
+
                     # If the key does not exist, insert it
                     if result is None:
                         c.execute("INSERT INTO keys VALUES (?, ?, ?, ?, ?, ?, ?)",
                             (str(building), roomNum, str(buildingCode), keyCode, keyNum, checkedStatus, authorization))
+                    else:
+
+                        # If the checkedStatus has changed, insert a record into audit.db
+                        if result[5] != checkedStatus:
+                            audit_c.execute("INSERT INTO audit VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                                (str(building), roomNum, str(buildingCode), keyCode, keyNum, checkedStatus, authorization, datetime.datetime.now()))
 
     conn.commit()
     conn.close()
@@ -165,6 +198,9 @@ def insert_mt_keys():
 def insert_sd_keys():
     conn = sqlite3.connect('keys.db')
     c = conn.cursor()
+
+    audit_conn = sqlite3.connect('audit.db')
+    audit_c = audit_conn.cursor()
 
     keyNums = range(1,4)
     buildingCodes = ['HD']
@@ -179,14 +215,22 @@ def insert_sd_keys():
         for keyNum in keyNums:
             for buildingCode in buildingCodes:
                 for building in buildings:
+
                     # Check if the key already exists
                     c.execute("SELECT * FROM keys WHERE building = ? AND roomNum = ? AND buildingCode = ? AND keyCode = ? AND keyNum = ?",
                         (str(building), roomNum, str(buildingCode), keyCode, keyNum))
                     result = c.fetchone()
+
                     # If the key does not exist, insert it
                     if result is None:
                         c.execute("INSERT INTO keys VALUES (?, ?, ?, ?, ?, ?, ?)",
                             (str(building), roomNum, str(buildingCode), keyCode, keyNum, checkedStatus, authorization))
+                    else:
+
+                        # If the checkedStatus has changed, insert a record into audit.db
+                        if result[5] != checkedStatus:
+                            audit_c.execute("INSERT INTO audit VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                                (str(building), roomNum, str(buildingCode), keyCode, keyNum, checkedStatus, authorization, datetime.datetime.now()))
 
     conn.commit()
     conn.close()    
@@ -194,6 +238,9 @@ def insert_sd_keys():
 def insert_sw_keys():
     conn = sqlite3.connect('keys.db')
     c = conn.cursor()
+
+    audit_conn = sqlite3.connect('audit.db')
+    audit_c = audit_conn.cursor()
 
     keyNums = range(1,4)
     buildingCodes = ['CH']
@@ -208,14 +255,22 @@ def insert_sw_keys():
         for keyNum in keyNums:
             for buildingCode in buildingCodes:
                 for building in buildings:
+
                     # Check if the key already exists
                     c.execute("SELECT * FROM keys WHERE building = ? AND roomNum = ? AND buildingCode = ? AND keyCode = ? AND keyNum = ?",
                         (str(building), roomNum, str(buildingCode), keyCode, keyNum))
                     result = c.fetchone()
+
                     # If the key does not exist, insert it
                     if result is None:
                         c.execute("INSERT INTO keys VALUES (?, ?, ?, ?, ?, ?, ?)",
                             (str(building), roomNum, str(buildingCode), keyCode, keyNum, checkedStatus, authorization))
+                    else:
+
+                        # If the checkedStatus has changed, insert a record into audit.db
+                        if result[5] != checkedStatus:
+                            audit_c.execute("INSERT INTO audit VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                                (str(building), roomNum, str(buildingCode), keyCode, keyNum, checkedStatus, authorization, datetime.datetime.now()))
 
     conn.commit()
     conn.close()
@@ -225,7 +280,17 @@ def insert_sw_keys():
 # AUDIT FUNCTIONS ONLY
 #-----------------------------------//
 
-    
+def create_audit_table():
+    conn = sqlite3.connect('audit.db')
+    c = conn.cursor()
+    c.execute('''SELECT count(name) FROM sqlite_master WHERE type='table' AND name='audit' ''')
+    # If the table doesn't exist, create it
+    if c.fetchone()[0] != 1:
+        c.execute('''CREATE TABLE audit
+                     (building TEXT, roomNum INTEGER, buildingCode TEXT, keyCode INTEGER, keyNum INTEGER, checkedStatus TEXT, authorization INTEGER, changeTime TEXT)''')
+        conn.commit()
+    conn.close()
+
 
 #-----------------------------------//
 # WEB FUNCTIONS ONLY
@@ -304,6 +369,7 @@ def confirm():
 if __name__ == '__main__':
     create_user_table()                          # Create user table if it doesn't exist
     create_key_table()                           # Create key table if it doesn't exist
+    create_audit_table()                         # Create audit table if it doesn't exist
     insert_user('chintan', 'admin', '123')       # Insert sample user data
     insert_user('sly', 'admin', '456')
     insert_user('m1', 'p1', '111') 
