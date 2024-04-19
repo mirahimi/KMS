@@ -97,9 +97,9 @@ def insert_kw_keys():
     checkedStatus = 'Checked In'
     authorization = 1
 
-    for i in range(11):  
-        keyCode = 300 + i
-        roomNum = 100 + i
+    for i in range(10):  
+        keyCode = 1 + i
+        roomNum = 1 + i
     
         for keyNum in keyNums:
             for buildingCode in buildingCodes:
@@ -137,9 +137,9 @@ def insert_lh_keys():
     checkedStatus = 'Checked In'
     authorization = 1
 
-    for i in range(11):  
-        keyCode = 400 + i
-        roomNum = 100 + i
+    for i in range(10):  
+        keyCode = 11 + i
+        roomNum = 1 + i
     
         for keyNum in keyNums:
             for buildingCode in buildingCodes:
@@ -177,9 +177,9 @@ def insert_mt_keys():
     checkedStatus = 'Checked In'
     authorization = 1
 
-    for i in range(11):  
-        keyCode = 500 + i
-        roomNum = 100 + i
+    for i in range(10):  
+        keyCode = 21 + i
+        roomNum = 1 + i
     
         for keyNum in keyNums:
             for buildingCode in buildingCodes:
@@ -216,9 +216,9 @@ def insert_sd_keys():
     checkedStatus = 'Checked In'
     authorization = 1
 
-    for i in range(11):  
-        keyCode = 600 + i
-        roomNum = 100 + i
+    for i in range(10):  
+        keyCode = 31 + i
+        roomNum = 1 + i
     
         for keyNum in keyNums:
             for buildingCode in buildingCodes:
@@ -256,9 +256,9 @@ def insert_sw_keys():
     checkedStatus = 'Checked In'
     authorization = 1
 
-    for i in range(11):  
-        keyCode = 700 + i
-        roomNum = 100 + i
+    for i in range(10):  
+        keyCode = 41 + i
+        roomNum = 1 + i
     
         for keyNum in keyNums:
             for buildingCode in buildingCodes:
@@ -421,6 +421,8 @@ def confirm():
     key = request.form['key']
     status = request.form['status']
 
+    print(f"Housing: {housing}, Room: {room}, Key: {key}, Status: {status}")
+
     # Get the buildingCode and keyCode based on the housing and room
     buildingCode, keyCode = get_building_code_and_key_code(housing, room)
 
@@ -432,10 +434,13 @@ def confirm():
     audit_c = audit_conn.cursor()
 
     # Check if the key already exists
-    c.execute("SELECT * FROM keys WHERE building = ? AND roomNum = ? AND keyNum = ? AND buildingCode = ? AND keyCode = ?",
-              (str(housing), int(room), int(key), str(buildingCode), int(keyCode)))
+    c.execute("SELECT * FROM keys WHERE building = ? AND roomNum = ? AND keyNum = ? AND checkedStatus = ?",
+              (str(housing), int(room), int(key), status))
     
+    print(f"Status: {status}")
     result = c.fetchone()
+    print(f"Result: {result}")
+    print(f"Status: {status}")
     # If the key exists
     if result is not None:
         # If the user is trying to check out a key that is already checked out
@@ -446,7 +451,8 @@ def confirm():
             last_checkout_time = audit_c.fetchone()[0]
             return f"The key for building {housing}, room number {room}, key number {key} is already checked out. It was last checked out on {last_checkout_time}."
         else:
-            # Update the checkedStatus in keys.db and insert a record into audit.db
+        # Update the checkedStatus in keys.db and insert a record into audit.db
+            print(f"Status: {status}")
             c.execute("UPDATE keys SET checkedStatus = ? WHERE building = ? AND roomNum = ? AND keyNum = ? AND buildingCode = ? AND keyCode = ?",
                       (status, str(housing), int(room), int(key), str(buildingCode), int(keyCode)))
             audit_c.execute("INSERT INTO audit VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
