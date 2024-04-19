@@ -92,12 +92,19 @@
                     <label for="keySelect">Select Key:</label>
                     <select id="keySelect" name="key" style="margin-left: 29px; margin-top: 10px;">
                         <option value="">Select Key</option>
-                        <option value="Key 1">Key 1</option>
-                        <option value="Key 2">Key 2</option>
-                        <option value="Key 3">Key 3</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
                     </select>
                 </div>
 
+                <div id="statusOptions" style="display:none;">
+                    <label for="statusSelect">Checking in or out:</label>
+                    <select id="statusSelect" name="status" style="margin-left: 29px; margin-top: 10px;">
+                        <option value="Checked In">Checking in</option>
+                        <option value="Checked Out">Checking out</option>
+                    </select>
+                </div>
 
                 <div class="input-container submit-container">
                     <button type="submit">Confirm Choice</button>
@@ -116,26 +123,26 @@
                     
                     if (housingSelect.value === "Killingsworth Hall") {
                         // Show room options for Killingsworth Hall
-                        for (var i = 100; i <= 105; i++) {
+                        for (var i = 1; i <= 10; i++) {
                             var option = document.createElement("option");
                             option.text = "KW " + i;
-                            option.value = "KW" + i;
+                            option.value = i;
                             roomSelect.appendChild(option);
                         }
                     } else if (housingSelect.value === "McCullough-Trigg Hall") {
                         // Show room options for McCullough-Trigg Hall
-                        for (var i = 100; i <= 105; i++) {
+                        for (var i = 1; i <= 10; i++) {
                             var option = document.createElement("option");
-                            option.text = "Trig " + i;
-                            option.value = "Trig" + i;
+                            option.text = "Trigg " + i;
+                            option.value = "Trigg " + i;
                             roomSelect.appendChild(option);
                         }
                     } else if (housingSelect.value === "Legacy Hall") {
                         // Show room options for Legacy Hall
-                        for (var i = 100; i <= 105; i++) {
+                        for (var i = 1; i <= 10; i++) {
                             var option = document.createElement("option");
                             option.text = "Legacy " + i;
-                            option.value = "Legacy" + i;
+                            option.value = "Legacy " + i;
                             roomSelect.appendChild(option);
                         }
                     } else if (housingSelect.value === "Sunwatcher Apartments") {
@@ -143,7 +150,7 @@
                         for (var i = 1; i <= 10; i++) {
                             var option = document.createElement("option");
                             option.text = "SW " + i;
-                            option.value = "SW" + i;
+                            option.value = "SW " + i;
                             roomSelect.appendChild(option);
                         }
                     } else if (housingSelect.value === "Sundance Apartments") {
@@ -151,7 +158,7 @@
                         for (var i = 1; i <= 10; i++) {
                             var option = document.createElement("option");
                             option.text = "SDC " + i;
-                            option.value = "SDC" + i;
+                            option.value = "SDC " + i;
                             roomSelect.appendChild(option);
                         }
                     }
@@ -159,6 +166,7 @@
                     // Show room selection
                     document.getElementById("roomOptions").style.display = "block";
                     document.getElementById("keyOptions").style.display = "none"; // Hide key options initially
+                    document.getElementById("statusOptions").style.display = "none;"
                 });
 
                 document.getElementById("roomSelect").addEventListener("change", function() {
@@ -172,7 +180,17 @@
                     }
                 });
 
-
+                document.getElementById("keySelect").addEventListener("change", function() {
+                    var roomSelect = document.getElementById("keySelect");
+                    
+                    // Show status options if a key is selected
+                    if (keySelect.value !== "") {
+                        document.getElementById("statusOptions").style.display = "block";
+                    } else {
+                        document.getElementById("statusOptions").style.display = "none";
+                    }
+                });
+                
             </script>
         </div>
     </div>

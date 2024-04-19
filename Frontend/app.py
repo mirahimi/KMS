@@ -4,6 +4,14 @@ from flask import Flask, render_template, request, redirect
 import sqlite3
 import datetime
 
+BUILDING_CODES = {
+    'Killingsworth Hall': 'HA',
+    'Legacy Hall': 'HE',
+    'McCullough Trigg Hall': 'CA',
+    'Sundance Court': 'HD',
+    'Sunwatcher Village': 'CH'
+}
+
 # Initialize a Flash Application
 app = Flask(__name__)
 
@@ -296,6 +304,16 @@ def create_audit_table():
 # WEB FUNCTIONS ONLY
 #-----------------------------------//
 
+def get_building_code_and_key_code(housing, room):
+    # Get the building code from the mapping
+    buildingCode = BUILDING_CODES[housing]
+
+    # Calculate the key code based on the room number
+    # Assuming room numbers start from 100 and key codes start from 300, 400, etc.
+    keyCode = (int(room) - 100) + 300 + (100 * (list(BUILDING_CODES.keys()).index(housing)))
+
+    return buildingCode, keyCode
+
 # Route for Login Page
 @app.route('/')
 def login_page():
@@ -340,28 +358,107 @@ def pin_page():
         username = request.form['userID']
         pin = request.form['pin']
         if check_pin(username, pin):
-             return render_template('keys.html') # If Valid Credentials, render 'Keys' HTML Template
+             return redirect('/keys') # If Valid Credentials, render 'Keys' HTML Template
         else:
             return redirect('/pin')              # If Invalid Credentials, redirect to the Pin Page
     else:
         return render_template('pin_page.html')  # If it's a GET request, render the PIN Page
+    
+@app.route('/keys')
+def keys_page():
+        return render_template('keys.html')    
 
-# Route for Confirming User's Selection
+# @app.route('/confirm', methods=['POST'])
+# def confirm():
+#     housing = request.form['housing']
+#     room = request.form['room']
+#     key = request.form['key']
+#     status = request.form['status']
+
+#     # Print all form data
+#     print(f"Housing: {housing}, Room: {room}, Key: {key}, Status: {status}")
+
+#     # Update keys.db and audit.db
+#     conn = sqlite3.connect('keys.db')
+#     c = conn.cursor()
+
+#     audit_conn = sqlite3.connect('audit.db')
+#     audit_c = audit_conn.cursor()
+
+#     # Check if the key already exists
+#     c.execute("SELECT * FROM keys WHERE building = ? AND roomNum = ? AND keyNum = ?",
+#               (str(housing), int(room), int(key)))
+     
+#     result = c.fetchone()
+#     # If the key exists
+#     if result is not None:
+#         # If the user is trying to check out a key that is already checked out
+#         if result[5] == 'Checked Out' and status == 'Checked Out':
+#             # Fetch the last checkout time from audit.db
+#             audit_c.execute("SELECT changeTime FROM audit WHERE building = ? AND roomNum = ? AND keyNum = ? AND checkedStatus = 'Checked Out' ORDER BY changeTime DESC LIMIT 1",
+#                             (str(housing), int(room), int(key), status))
+#             last_checkout_time = audit_c.fetchone()[0]
+#             return f"The key for building {housing}, room number {room}, key number {key} is already checked out. It was last checked out on {last_checkout_time}."
+#         else:
+#             # Update the checkedStatus in keys.db and insert a record into audit.db
+#             c.execute("UPDATE keys SET checkedStatus = ? WHERE building = ? AND roomNum = ? AND keyNum = ?",
+#                       (status, str(housing), int(room), int(key)))
+#             audit_c.execute("INSERT INTO audit VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+#                             (result[0], result[1], result[2], result[3], result[4], status, result[6], datetime.datetime.now()))
+
+#     conn.commit()
+#     conn.close()
+#     audit_conn.commit()
+#     audit_conn.close()
+
+#     # Render a new template or return the selection as a response
+#     return render_template('confirmation.html', housing=housing, room=room, key=key, status=status)
+
 @app.route('/confirm', methods=['POST'])
 def confirm():
     housing = request.form['housing']
     room = request.form['room']
     key = request.form['key']
-    
-    # Process the selected housing, room, and key options
-    selection = f"<b>You have selected:</b> <br/> \
-                 <b>Housing:</b> {housing}<br/> \
-                 <b>Room:</b> {room}<br/> \
-                 <b>Key:</b> {key}"
-    
-        # Render a new template or return the selection as a response
-    return selection
+    status = request.form['status']
 
+    # Get the buildingCode and keyCode based on the housing and room
+    buildingCode, keyCode = get_building_code_and_key_code(housing, room)
+
+    # Update keys.db and audit.db
+    conn = sqlite3.connect('keys.db')
+    c = conn.cursor()
+
+    audit_conn = sqlite3.connect('audit.db')
+    audit_c = audit_conn.cursor()
+
+    # Check if the key already exists
+    c.execute("SELECT * FROM keys WHERE building = ? AND roomNum = ? AND keyNum = ? AND buildingCode = ? AND keyCode = ?",
+              (str(housing), int(room), int(key), str(buildingCode), int(keyCode)))
+    
+    result = c.fetchone()
+    # If the key exists
+    if result is not None:
+        # If the user is trying to check out a key that is already checked out
+        if result[5] == 'Checked Out' and status == 'Checked Out':
+            # Fetch the last checkout time from audit.db
+            audit_c.execute("SELECT changeTime FROM audit WHERE building = ? AND roomNum = ? AND keyNum = ? AND checkedStatus = 'Checked Out' ORDER BY changeTime DESC LIMIT 1",
+                            (str(housing), int(room), int(key), status))
+            last_checkout_time = audit_c.fetchone()[0]
+            return f"The key for building {housing}, room number {room}, key number {key} is already checked out. It was last checked out on {last_checkout_time}."
+        else:
+            # Update the checkedStatus in keys.db and insert a record into audit.db
+            c.execute("UPDATE keys SET checkedStatus = ? WHERE building = ? AND roomNum = ? AND keyNum = ? AND buildingCode = ? AND keyCode = ?",
+                      (status, str(housing), int(room), int(key), str(buildingCode), int(keyCode)))
+            audit_c.execute("INSERT INTO audit VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                            (result[0], result[1], result[2], result[3], result[4], status, result[6], datetime.datetime.now()))
+
+    conn.commit()
+    conn.close()
+    audit_conn.commit()
+    audit_conn.close()
+
+    # Render a new template or return the selection as a response
+    return render_template('confirmation.html', housing=housing, room=room, key=key, status=status)
 
 
 

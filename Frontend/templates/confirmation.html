@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Housing Options</title>
+    <style>
+        body {
+            background-color: rgb(206, 227, 234); /* Set light blue background color */
+            margin: 0; /* Remove default margin */
+            padding: 0; /* Remove default padding */
+            display: flex; /* Use flexbox for centering */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            height: 100vh; /* Full viewport height */
+        }
+        .container {
+            background-color: white; /* Set background color to white */
+            padding: 20px; /* Add padding */
+            border-radius: 10px; /* Add rounded corners */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add shadow */
+            width: 400px; /* Set width */
+            max-width: 100%; /* Limit to viewport width */
+            display: flex; /* Use flexbox for centering */
+            flex-direction: column; /* Stack children vertically */
+            align-items: center; /* Center children horizontally */
+        }
+        .logo-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .msu_logo, .kms_logo {
+            width: 70px; /* Set the width of the logos */
+            height: auto; /* Let the height adjust automatically */
+        }
+        h1 {
+            font-size: 24px; /* Adjust font size as needed */
+            text-align: center; /* Center the Welcome sign */
+            color: blue; /* Change font color to blue */
+            font-style: italic;
+            margin: 0; /* Remove default margin */
+        }
+        label {
+            margin-bottom: 10px; /* Add margin below labels */
+        }
+        button {
+            margin-top: 25px; /* Add margin to the top of the button */
+            margin-left: 80px; /* Add margin to the top of the button */
+            background-color: rgba(37, 4, 114, 0.571); /* Set button background color */
+            color: white; /* Set button text color */
+            padding: 10px 15px; /* Add padding to the button */
+            border: none; /* Remove button border */
+            border-radius: 5px; /* Add button border radius */
+            cursor: pointer; /* Change cursor to pointer on hover */
+        }
+        .submit-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="content">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='msu_logo.png') }}" alt="msu_logo" class="msu_logo">
+                <h1>MSU's <br> Key Management System </h1>
+                <img src="{{ url_for('static', filename='kms_logo.png') }}" alt="kms_logo" class="kms_logo">
+            </div>
+
+            <div class="middle">
+                <h1>Confirmation</h1><br>
+                <p>Your selection has been confirmed!<br>
+                <b>Housing:</b> {{ housing }}<br>
+                <b>Room:</b> {{ room }}<br>
+                <b>Key:</b> {{ key }}<br>
+                <b>Status:</b> {{ status }}</p>
+                <div class="input-container submit-container">
+                    <button onclick="location.href=('/keys')">Back to Selection</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
