@@ -69,7 +69,7 @@ def create_key_table():
     # If the table doesn't exist, create it
     if c.fetchone()[0] != 1:
         c.execute('''CREATE TABLE keys
-                     (keyCode INTEGER, keyNum INTEGER, buildingCode TEXT, building TEXT, roomNum INTEGER, checkedStatus TEXT, authorization INTEGER)''')
+                     (building TEXT, roomNum INTEGER, buildingCode TEXT, keyCode INTEGER, keyNum INTEGER, checkedStatus TEXT, authorization INTEGER)''')
         conn.commit()
     conn.close()
 
@@ -79,25 +79,153 @@ def insert_kw_keys():
     conn = sqlite3.connect('keys.db')
     c = conn.cursor()
 
-    keyCodes = range(300, 311)
-    keyNums = range(1, 4)
-    buildingCodes = 'HA'
-    buildings = 'Killingsworth Hall'
-    roomNums = range(100, 111)
+    keyNums = range(1,4)
+    buildingCodes = ['HA']
+    buildings = ['Killingsworth Hall']
     checkedStatus = 'Checked In'
     authorization = 1
 
-    for keyCode in keyCodes:
+    for i in range(11):  
+        keyCode = 300 + i
+        roomNum = 100 + i
+    
         for keyNum in keyNums:
             for buildingCode in buildingCodes:
                 for building in buildings:
-                    for roomNum in roomNums:
+                    # Check if the key already exists
+                    c.execute("SELECT * FROM keys WHERE building = ? AND roomNum = ? AND buildingCode = ? AND keyCode = ? AND keyNum = ?",
+                        (str(building), roomNum, str(buildingCode), keyCode, keyNum))
+                    result = c.fetchone()
+                    # If the key does not exist, insert it
+                    if result is None:
                         c.execute("INSERT INTO keys VALUES (?, ?, ?, ?, ?, ?, ?)",
-                            (keyCode, keyNum, str(buildingCode), str(building), roomNum, checkedStatus, authorization))
+                            (str(building), roomNum, str(buildingCode), keyCode, keyNum, checkedStatus, authorization))
 
     conn.commit()
     conn.close()
 
+def insert_lh_keys():
+    conn = sqlite3.connect('keys.db')
+    c = conn.cursor()
+
+    keyNums = range(1,4)
+    buildingCodes = ['HE']
+    buildings = ['Legacy Hall']
+    checkedStatus = 'Checked In'
+    authorization = 1
+
+    for i in range(11):  
+        keyCode = 400 + i
+        roomNum = 100 + i
+    
+        for keyNum in keyNums:
+            for buildingCode in buildingCodes:
+                for building in buildings:
+                    # Check if the key already exists
+                    c.execute("SELECT * FROM keys WHERE building = ? AND roomNum = ? AND buildingCode = ? AND keyCode = ? AND keyNum = ?",
+                        (str(building), roomNum, str(buildingCode), keyCode, keyNum))
+                    result = c.fetchone()
+                    # If the key does not exist, insert it
+                    if result is None:
+                        c.execute("INSERT INTO keys VALUES (?, ?, ?, ?, ?, ?, ?)",
+                            (str(building), roomNum, str(buildingCode), keyCode, keyNum, checkedStatus, authorization))
+
+    conn.commit()
+    conn.close()
+
+def insert_mt_keys():
+    conn = sqlite3.connect('keys.db')
+    c = conn.cursor()
+
+    keyNums = range(1,4)
+    buildingCodes = ['CA']
+    buildings = ['McCullough Trigg']
+    checkedStatus = 'Checked In'
+    authorization = 1
+
+    for i in range(11):  
+        keyCode = 500 + i
+        roomNum = 100 + i
+    
+        for keyNum in keyNums:
+            for buildingCode in buildingCodes:
+                for building in buildings:
+                    # Check if the key already exists
+                    c.execute("SELECT * FROM keys WHERE building = ? AND roomNum = ? AND buildingCode = ? AND keyCode = ? AND keyNum = ?",
+                        (str(building), roomNum, str(buildingCode), keyCode, keyNum))
+                    result = c.fetchone()
+                    # If the key does not exist, insert it
+                    if result is None:
+                        c.execute("INSERT INTO keys VALUES (?, ?, ?, ?, ?, ?, ?)",
+                            (str(building), roomNum, str(buildingCode), keyCode, keyNum, checkedStatus, authorization))
+
+    conn.commit()
+    conn.close()
+
+def insert_sd_keys():
+    conn = sqlite3.connect('keys.db')
+    c = conn.cursor()
+
+    keyNums = range(1,4)
+    buildingCodes = ['HD']
+    buildings = ['Sundance Court']
+    checkedStatus = 'Checked In'
+    authorization = 1
+
+    for i in range(11):  
+        keyCode = 600 + i
+        roomNum = 100 + i
+    
+        for keyNum in keyNums:
+            for buildingCode in buildingCodes:
+                for building in buildings:
+                    # Check if the key already exists
+                    c.execute("SELECT * FROM keys WHERE building = ? AND roomNum = ? AND buildingCode = ? AND keyCode = ? AND keyNum = ?",
+                        (str(building), roomNum, str(buildingCode), keyCode, keyNum))
+                    result = c.fetchone()
+                    # If the key does not exist, insert it
+                    if result is None:
+                        c.execute("INSERT INTO keys VALUES (?, ?, ?, ?, ?, ?, ?)",
+                            (str(building), roomNum, str(buildingCode), keyCode, keyNum, checkedStatus, authorization))
+
+    conn.commit()
+    conn.close()    
+
+def insert_sw_keys():
+    conn = sqlite3.connect('keys.db')
+    c = conn.cursor()
+
+    keyNums = range(1,4)
+    buildingCodes = ['CH']
+    buildings = ['Sunwatcher Village']
+    checkedStatus = 'Checked In'
+    authorization = 1
+
+    for i in range(11):  
+        keyCode = 700 + i
+        roomNum = 100 + i
+    
+        for keyNum in keyNums:
+            for buildingCode in buildingCodes:
+                for building in buildings:
+                    # Check if the key already exists
+                    c.execute("SELECT * FROM keys WHERE building = ? AND roomNum = ? AND buildingCode = ? AND keyCode = ? AND keyNum = ?",
+                        (str(building), roomNum, str(buildingCode), keyCode, keyNum))
+                    result = c.fetchone()
+                    # If the key does not exist, insert it
+                    if result is None:
+                        c.execute("INSERT INTO keys VALUES (?, ?, ?, ?, ?, ?, ?)",
+                            (str(building), roomNum, str(buildingCode), keyCode, keyNum, checkedStatus, authorization))
+
+    conn.commit()
+    conn.close()
+
+
+#-----------------------------------//
+# AUDIT FUNCTIONS ONLY
+#-----------------------------------//
+
+    
 
 #-----------------------------------//
 # WEB FUNCTIONS ONLY
@@ -184,5 +312,9 @@ if __name__ == '__main__':
     insert_user('m4', 'p4', '444')
     insert_user('m5', 'p5', '555')
     insert_kw_keys()
+    insert_lh_keys()
+    insert_mt_keys()
+    insert_sd_keys()
+    insert_sw_keys()
 
     app.run(debug=True)                          # Run Flask App in Debug Mode
