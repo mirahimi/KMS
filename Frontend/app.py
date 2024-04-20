@@ -1,6 +1,7 @@
 # This is the file that needs to be run in order to run the KMS Application
 
 from flask import Flask, render_template, request, redirect
+import os
 import sqlite3
 import datetime
 
@@ -295,7 +296,7 @@ def create_audit_table():
     # If the table doesn't exist, create it
     if c.fetchone()[0] != 1:
         c.execute('''CREATE TABLE audit
-                     (building TEXT, roomNum INTEGER, buildingCode TEXT, keyCode INTEGER, keyNum INTEGER, checkedStatus TEXT, authorization INTEGER, changeTime TEXT, )''')
+                     (building TEXT, roomNum INTEGER, buildingCode TEXT, keyCode INTEGER, keyNum INTEGER, checkedStatus TEXT, authorization INTEGER, changeTime TEXT)''')
         conn.commit()
     conn.close()
 
@@ -364,55 +365,30 @@ def pin_page():
     else:
         return render_template('pin_page.html')  # If it's a GET request, render the PIN Page
     
+
+
 @app.route('/keys')
 def keys_page():
         return render_template('keys.html')    
 
-# @app.route('/confirm', methods=['POST'])
-# def confirm():
-#     housing = request.form['housing']
-#     room = request.form['room']
-#     key = request.form['key']
-#     status = request.form['status']
+@app.route('/pictures')
+def pictures():
+        return render_template('pictures.html')    
 
-#     # Print all form data
-#     print(f"Housing: {housing}, Room: {room}, Key: {key}, Status: {status}")
+# Route to trigger user_image.py execution
+@app.route('/capture_user_image')
+def capture_user_image():
+    # Execute user_image.py using os.system
+    os.system("python user_image.py")
+    return "User image captured successfully."
 
-#     # Update keys.db and audit.db
-#     conn = sqlite3.connect('keys.db')
-#     c = conn.cursor()
+# Route to trigger key_image.py execution
+@app.route('/capture_key_image')
+def capture_key_image():
+    # Execute key_image.py using os.system
+    os.system("python key_image.py")
+    return "Key image captured successfully."
 
-#     audit_conn = sqlite3.connect('audit.db')
-#     audit_c = audit_conn.cursor()
-
-#     # Check if the key already exists
-#     c.execute("SELECT * FROM keys WHERE building = ? AND roomNum = ? AND keyNum = ?",
-#               (str(housing), int(room), int(key)))
-     
-#     result = c.fetchone()
-#     # If the key exists
-#     if result is not None:
-#         # If the user is trying to check out a key that is already checked out
-#         if result[5] == 'Checked Out' and status == 'Checked Out':
-#             # Fetch the last checkout time from audit.db
-#             audit_c.execute("SELECT changeTime FROM audit WHERE building = ? AND roomNum = ? AND keyNum = ? AND checkedStatus = 'Checked Out' ORDER BY changeTime DESC LIMIT 1",
-#                             (str(housing), int(room), int(key), status))
-#             last_checkout_time = audit_c.fetchone()[0]
-#             return f"The key for building {housing}, room number {room}, key number {key} is already checked out. It was last checked out on {last_checkout_time}."
-#         else:
-#             # Update the checkedStatus in keys.db and insert a record into audit.db
-#             c.execute("UPDATE keys SET checkedStatus = ? WHERE building = ? AND roomNum = ? AND keyNum = ?",
-#                       (status, str(housing), int(room), int(key)))
-#             audit_c.execute("INSERT INTO audit VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-#                             (result[0], result[1], result[2], result[3], result[4], status, result[6], datetime.datetime.now()))
-
-#     conn.commit()
-#     conn.close()
-#     audit_conn.commit()
-#     audit_conn.close()
-
-#     # Render a new template or return the selection as a response
-#     return render_template('confirmation.html', housing=housing, room=room, key=key, status=status)
 
 @app.route('/confirm', methods=['POST'])
 def confirm():
