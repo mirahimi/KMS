@@ -71,18 +71,20 @@
             </div>
 
             <div class="middle">
-                <h1>Confirmation</h1><br>
-                <p>Your selection has been confirmed!<br>
-                <b>Housing:</b> {{ housing }}<br>
-                <b>Room:</b> {{ room }}<br>
-                <b>Key:</b> {{ key }}<br>
-                <b>Status:</b> {{ status }}</p>
-                <div class="input-container submit-container">
-                    <button onclick="location.href=('/keys')">Back to Selection</button>
+                <h1>Confirmation</h1>
+                <p>Your selection has been confirmed!</p>
+                <ul>
+                    <li><b>Housing:</b> {{ housing }}</li>
+                    <li><b>Room:</b> {{ room }}</li>
+                    <li><b>Key:</b> {{ key }}</li>
+                    <li><b>Status:</b> {{ status }}</li>
+                </ul>
+                <div class="input-container center">
+                    <!-- <button onclick="location.href=('/keys')">Back to Selection</button> -->
                     <button onclick="location.href=('/pictures')">Image Verification</button>
-
                 </div>
             </div>
+            
         </div>
     </div>
 </body>

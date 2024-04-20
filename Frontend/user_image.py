@@ -22,7 +22,7 @@ def create_table(conn, create_table_sql):
 
 def insert_image(conn, user_images):
     """ insert an image into the images table """
-    sql = ''' INSERT INTO images(user_images)
+    sql = ''' INSERT INTO images("Images")
               VALUES(?) '''
     cur = conn.cursor()
     with open(user_images, 'rb') as f:
@@ -59,11 +59,11 @@ def capture_user_image():
             cv2.imwrite(filename, frame)
             
             # Store the image in the database
-            conn = create_connection("images.db")
+            conn = create_connection("audit.db")
             if conn is not None:
                 create_table_sql = """ CREATE TABLE IF NOT EXISTS images (
                                         id INTEGER PRIMARY KEY,
-                                        user_images TEXT NOT NULL
+                                        "User Image" BLOB NOT NULL
                                     ); """
                 create_table(conn, create_table_sql)
                 with conn:
