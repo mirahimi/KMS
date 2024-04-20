@@ -97,7 +97,7 @@ def insert_kw_keys():
     checkedStatus = 'Checked In'
     authorization = 1
 
-    for i in range(10):  
+    for i in range(3):  
         keyCode = 1 + i
         roomNum = 1 + i
     
@@ -137,7 +137,7 @@ def insert_lh_keys():
     checkedStatus = 'Checked In'
     authorization = 1
 
-    for i in range(10):  
+    for i in range(3):  
         keyCode = 11 + i
         roomNum = 1 + i
     
@@ -177,7 +177,7 @@ def insert_mt_keys():
     checkedStatus = 'Checked In'
     authorization = 1
 
-    for i in range(10):  
+    for i in range(3):  
         keyCode = 21 + i
         roomNum = 1 + i
     
@@ -216,7 +216,7 @@ def insert_sd_keys():
     checkedStatus = 'Checked In'
     authorization = 1
 
-    for i in range(10):  
+    for i in range(3):  
         keyCode = 31 + i
         roomNum = 1 + i
     
@@ -256,7 +256,7 @@ def insert_sw_keys():
     checkedStatus = 'Checked In'
     authorization = 1
 
-    for i in range(10):  
+    for i in range(3):  
         keyCode = 41 + i
         roomNum = 1 + i
     
@@ -295,7 +295,7 @@ def create_audit_table():
     # If the table doesn't exist, create it
     if c.fetchone()[0] != 1:
         c.execute('''CREATE TABLE audit
-                     (building TEXT, roomNum INTEGER, buildingCode TEXT, keyCode INTEGER, keyNum INTEGER, checkedStatus TEXT, authorization INTEGER, changeTime TEXT)''')
+                     (building TEXT, roomNum INTEGER, buildingCode TEXT, keyCode INTEGER, keyNum INTEGER, checkedStatus TEXT, authorization INTEGER, changeTime TEXT, )''')
         conn.commit()
     conn.close()
 
@@ -304,15 +304,15 @@ def create_audit_table():
 # WEB FUNCTIONS ONLY
 #-----------------------------------//
 
-def get_building_code_and_key_code(housing, room):
-    # Get the building code from the mapping
-    buildingCode = BUILDING_CODES[housing]
+# def get_building_code_and_key_code(housing, room):
+#     # Get the building code from the mapping
+#     buildingCode = BUILDING_CODES[housing]
 
-    # Calculate the key code based on the room number
-    # Assuming room numbers start from 100 and key codes start from 300, 400, etc.
-    keyCode = (int(room) - 100) + 300 + (100 * (list(BUILDING_CODES.keys()).index(housing)))
+#     # Calculate the key code based on the room number
+#     # Assuming room numbers start from 100 and key codes start from 300, 400, etc.
+#     keyCode = (int(room) - 100) + 300 + (100 * (list(BUILDING_CODES.keys()).index(housing)))
 
-    return buildingCode, keyCode
+#     return buildingCode, keyCode
 
 # Route for Login Page
 @app.route('/')
@@ -422,9 +422,10 @@ def confirm():
     status = request.form['status']
 
     print(f"Housing: {housing}, Room: {room}, Key: {key}, Status: {status}")
-
-    # Get the buildingCode and keyCode based on the housing and room
-    buildingCode, keyCode = get_building_code_and_key_code(housing, room)
+    
+    # # Get the buildingCode and keyCode based on the housing and room
+    # buildingCode, keyCode = get_building_code_and_key_code(housing, room)
+    # print(f"Building Code: {buildingCode}")
 
     # Update keys.db and audit.db
     conn = sqlite3.connect('keys.db')
@@ -434,8 +435,8 @@ def confirm():
     audit_c = audit_conn.cursor()
 
     # Check if the key already exists
-    c.execute("SELECT * FROM keys WHERE building = ? AND roomNum = ? AND keyNum = ? AND checkedStatus = ?",
-              (str(housing), int(room), int(key), status))
+    c.execute("SELECT * FROM keys WHERE building = ? AND roomNum = ? AND keyNum = ?",
+              (str(housing), int(room), int(key)))
     
     print(f"Status: {status}")
     result = c.fetchone()
@@ -447,14 +448,14 @@ def confirm():
         if result[5] == 'Checked Out' and status == 'Checked Out':
             # Fetch the last checkout time from audit.db
             audit_c.execute("SELECT changeTime FROM audit WHERE building = ? AND roomNum = ? AND keyNum = ? AND checkedStatus = 'Checked Out' ORDER BY changeTime DESC LIMIT 1",
-                            (str(housing), int(room), int(key), status))
+                            (str(housing), int(room), int(key)))
             last_checkout_time = audit_c.fetchone()[0]
             return f"The key for building {housing}, room number {room}, key number {key} is already checked out. It was last checked out on {last_checkout_time}."
         else:
         # Update the checkedStatus in keys.db and insert a record into audit.db
             print(f"Status: {status}")
-            c.execute("UPDATE keys SET checkedStatus = ? WHERE building = ? AND roomNum = ? AND keyNum = ? AND buildingCode = ? AND keyCode = ?",
-                      (status, str(housing), int(room), int(key), str(buildingCode), int(keyCode)))
+            c.execute("UPDATE keys SET checkedStatus = ? WHERE building = ? AND roomNum = ? AND keyNum = ?",
+                      (status, str(housing), int(room), int(key)))
             audit_c.execute("INSERT INTO audit VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                             (result[0], result[1], result[2], result[3], result[4], status, result[6], datetime.datetime.now()))
 
