@@ -300,24 +300,20 @@ def create_audit_table():
         conn.commit()
     conn.close()
 
-#-----------------------------------//
-# IMAGE AUDIT FUNCTIONS ONLY
-#-----------------------------------//
-
-def create_image_audit_table():
-    conn = sqlite3.connect('image_audit.db')
-    c = conn.cursor()
-    c.execute('''SELECT count(name) FROM sqlite_master WHERE type='table' AND name='image_audit' ''')
-    # If the table doesn't exist, create it
-    if c.fetchone()[0] != 1:
-        c.execute('''CREATE TABLE image_audit
-                     (building TEXT, roomNum INTEGER, buildingCode TEXT, keyCode INTEGER, keyNum INTEGER, checkedStatus TEXT, authorization INTEGER, changeTime TEXT, userImage BLOB, keyImage BLOB)''')
-        conn.commit()
-    conn.close()
 
 #-----------------------------------//
 # WEB FUNCTIONS ONLY
 #-----------------------------------//
+
+# def get_building_code_and_key_code(housing, room):
+#     # Get the building code from the mapping
+#     buildingCode = BUILDING_CODES[housing]
+
+#     # Calculate the key code based on the room number
+#     # Assuming room numbers start from 100 and key codes start from 300, 400, etc.
+#     keyCode = (int(room) - 100) + 300 + (100 * (list(BUILDING_CODES.keys()).index(housing)))
+
+#     return buildingCode, keyCode
 
 # Route for Login Page
 @app.route('/')
@@ -375,51 +371,23 @@ def pin_page():
 def keys_page():
         return render_template('keys.html')    
 
-# @app.route('/confirm', methods=['POST'])
-# def confirm():
-#     housing = request.form['housing']
-#     room = request.form['room']
-#     key = request.form['key']
-#     status = request.form['status']
+@app.route('/pictures')
+def pictures():
+        return render_template('pictures.html')    
 
-#     # Print all form data
-#     print(f"Housing: {housing}, Room: {room}, Key: {key}, Status: {status}")
+# Route to trigger user_image.py execution
+@app.route('/capture_user_image')
+def capture_user_image():
+    # Execute user_image.py using os.system
+    os.system("python user_image.py")
+    return "User image captured successfully."
 
-#     # Update keys.db and audit.db
-#     conn = sqlite3.connect('keys.db')
-#     c = conn.cursor()
-
-#     audit_conn = sqlite3.connect('audit.db')
-#     audit_c = audit_conn.cursor()
-
-#     # Check if the key already exists
-#     c.execute("SELECT * FROM keys WHERE building = ? AND roomNum = ? AND keyNum = ?",
-#               (str(housing), int(room), int(key)))
-     
-#     result = c.fetchone()
-#     # If the key exists
-#     if result is not None:
-#         # If the user is trying to check out a key that is already checked out
-#         if result[5] == 'Checked Out' and status == 'Checked Out':
-#             # Fetch the last checkout time from audit.db
-#             audit_c.execute("SELECT changeTime FROM audit WHERE building = ? AND roomNum = ? AND keyNum = ? AND checkedStatus = 'Checked Out' ORDER BY changeTime DESC LIMIT 1",
-#                             (str(housing), int(room), int(key), status))
-#             last_checkout_time = audit_c.fetchone()[0]
-#             return f"The key for building {housing}, room number {room}, key number {key} is already checked out. It was last checked out on {last_checkout_time}."
-#         else:
-#             # Update the checkedStatus in keys.db and insert a record into audit.db
-#             c.execute("UPDATE keys SET checkedStatus = ? WHERE building = ? AND roomNum = ? AND keyNum = ?",
-#                       (status, str(housing), int(room), int(key)))
-#             audit_c.execute("INSERT INTO audit VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-#                             (result[0], result[1], result[2], result[3], result[4], status, result[6], datetime.datetime.now()))
-
-#     conn.commit()
-#     conn.close()
-#     audit_conn.commit()
-#     audit_conn.close()
-
-#     # Render a new template or return the selection as a response
-#     return render_template('confirmation.html', housing=housing, room=room, key=key, status=status)
+# Route to trigger key_image.py execution
+@app.route('/capture_key_image')
+def capture_key_image():
+    # Execute key_image.py using os.system
+    os.system("python key_image.py")
+    return "Key image captured successfully."
 
 @app.route('/confirm', methods=['POST'])
 def confirm():
@@ -472,14 +440,16 @@ def confirm():
     audit_conn.close()
 
     # Render a new template or return the selection as a response
+
     return render_template('confirmation.html', housing=housing, room=room, key=key, status=status)
+
+
 
 # Main block to execute when this script is run
 if __name__ == '__main__':
     create_user_table()                          # Create user table if it doesn't exist
     create_key_table()                           # Create key table if it doesn't exist
     create_audit_table()                         # Create audit table if it doesn't exist
-    create_image_audit_table()
     insert_user('chintan', 'admin', '123')       # Insert sample user data
     insert_user('sly', 'admin', '456')
     insert_user('m1', 'p1', '111') 
