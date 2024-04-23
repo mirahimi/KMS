@@ -20,18 +20,31 @@ def create_table(conn, create_table_sql):
     except Error as e:
         print(e)
 
+<<<<<<< HEAD:Frontend/key_image.py
 def insert_image(conn, image_file):
     """ insert an image into the images table """
     sql = ''' INSERT INTO images(image)
               VALUES(?) '''
     cur = conn.cursor()
     with open(image_file, 'rb') as f:
+=======
+def insert_image(conn, key_images):
+    """ insert an image into the images table """
+    sql = ''' INSERT INTO images("Key Image")
+              VALUES(?) '''
+    cur = conn.cursor()
+    with open(key_images, 'rb') as f:
+>>>>>>> 510484915994fc75ebc6014d114690d7b4986b53:key_image.py
         image_blob = f.read()
     cur.execute(sql, (sqlite3.Binary(image_blob),))
     conn.commit()
     return cur.lastrowid
 
+<<<<<<< HEAD:Frontend/key_image.py
 def capture_user_image():
+=======
+def capture_key_image():
+>>>>>>> 510484915994fc75ebc6014d114690d7b4986b53:key_image.py
     # Open the default camera
     cap = cv2.VideoCapture(0)
 
@@ -39,7 +52,7 @@ def capture_user_image():
     cv2.namedWindow('frame', cv2.WINDOW_NORMAL)
     cv2.resizeWindow('frame', 290, 218)  # Set your desired width and height
     cv2.moveWindow('frame', 487, 290)  # Set your desired x and y coordinates
-    cv2.setWindowTitle('frame', 'User Image')
+    cv2.setWindowTitle('frame', 'Key Image')
 
     count = 1
     while True:
@@ -51,19 +64,34 @@ def capture_user_image():
 
         # Break the loop if 'q' is pressed
         if cv2.waitKey(1) & 0xFF == ord('q'):
+<<<<<<< HEAD:Frontend/key_image.py
             filename = f'u_img{count}.jpg'
             while os.path.exists(filename):
                 count += 1
                 filename = f'u_img{count}.jpg'
+=======
+            filename = f'k_img{count}.jpg'
+            while os.path.exists(filename):
+                count += 1
+                filename = f'k_img{count}.jpg'
+>>>>>>> 510484915994fc75ebc6014d114690d7b4986b53:key_image.py
             # Save the image
             cv2.imwrite(filename, frame)
             
             # Store the image in the database
+<<<<<<< HEAD:Frontend/key_image.py
             conn = create_connection("images.db")
             if conn is not None:
                 create_table_sql = """ CREATE TABLE IF NOT EXISTS images (
                                         id integer PRIMARY KEY,
                                         image blob NOT NULL
+=======
+            conn = create_connection("audit.db")
+            if conn is not None:
+                create_table_sql = """ CREATE TABLE IF NOT EXISTS images (
+                                        id INTEGER PRIMARY KEY,
+                                        "Key Image" BLOB NOT NULL
+>>>>>>> 510484915994fc75ebc6014d114690d7b4986b53:key_image.py
                                     ); """
                 create_table(conn, create_table_sql)
                 with conn:
@@ -78,4 +106,8 @@ def capture_user_image():
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
+<<<<<<< HEAD:Frontend/key_image.py
     capture_user_image()
+=======
+    capture_key_image()
+>>>>>>> 510484915994fc75ebc6014d114690d7b4986b53:key_image.py

@@ -24,7 +24,7 @@
             width: 150px; /* Adjust width as needed */
         }
         .input-container input[type="submit"] {
-            width: 70px; /* Set width to auto */
+            width: 90px; /* Set width to auto */
             padding: 7px 14px; /* Adjust padding as needed */
             font-size: 14px; /* Adjust font size as needed */
         }
@@ -49,6 +49,7 @@
     </style>
 </head>
 
+
 <body>
     <div class="content">
         <div class="logo-container">
@@ -57,21 +58,25 @@
             <img src="{{ url_for('static', filename='kms_logo.png') }}" alt="kms_logo" class="kms_logo">
         </div>
         <div class="middle">
-            <form action="/pin" method="POST"> 
+            <form action="/register" method="POST">
+                <!-- Form fields for username, password, and PIN -->
                 <div class="input-container">
-                    <label for="userID">User ID:</label>
-                    <input type="text" id="userID" name="userID" autocomplete="off">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" autocomplete="off">
                 </div>
                 <div class="input-container">
-                    <label for="pin">Pin:</label>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" autocomplete="off">
+                </div>
+                <div class="input-container">
+                    <label for="pin">PIN:</label>
                     <input type="password" id="pin" name="pin" autocomplete="off">
                 </div>
                 <div class="input-container submit-container">
-                    <input type="submit" value="Login">
+                    <input type="submit" value="Register">
                 </div>
             </form>
         </div>
     </div>
 </body>
 </html>
-    
