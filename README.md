@@ -5,12 +5,15 @@
 
 ## Instructions
 
-1. Download and Unzip the [KMS](https://github.com/mirahimi/KMS/tree/main) directory. 
-2. Open the KMS directory in VS Code.
-3. Navigate to the [app.py](https://github.com/mirahimi/KMS/blob/main/Frontend/app.py) file.
-4. Open the terminal and install Flask web-framework
-    * **Command:** pip install flask
-5. Run the [app.py](https://github.com/mirahimi/KMS/blob/main/Frontend/app.py) file. Select *"Open in Browser"* Button.
+1. Unzip the **KMS** folder and open it in VS Code.
+2. Navigate to the **app.py** file.
+3. Open the terminal and install following dependencies:
+    * **Flask:** pip install flask
+    * **OpenCV:** pip install opencv-python
+4. Run **app.py** file. Select *"Open in Browser"* Button to open the *Web Application*.
+5. Register a User, Login, Check in/out a Key.
+6. Take **Pictures** (User,Key). Press **'q'** to close the window.
+5. Check **Databases** (User, Key, Audit) to view updates.
 
 
 ## Declarations: 
