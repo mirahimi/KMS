@@ -388,22 +388,20 @@ def confirm():
     status = request.form['status']
 
     print(f"Housing: {housing}, Room: {room}, Key: {key}, Status: {status}")
-    
-    # Update keys.db and audit.db
+
+    # Connect to keys.db
     conn = sqlite3.connect('keys.db')
     c = conn.cursor()
 
+    # Connect to audit.db
     audit_conn = sqlite3.connect('audit.db')
     audit_c = audit_conn.cursor()
 
     # Check if the key already exists
     c.execute("SELECT * FROM keys WHERE building = ? AND roomNum = ? AND keyNum = ?",
               (str(housing), int(room), int(key)))
-    
-    print(f"Status: {status}")
     result = c.fetchone()
-    print(f"Result: {result}")
-    print(f"Status: {status}")
+
     # If the key exists
     if result is not None:
         # If the user is trying to check out a key that is already checked out
@@ -411,6 +409,7 @@ def confirm():
             audit_c.execute("SELECT changeTime FROM audit WHERE building = ? AND roomNum = ? AND keyNum = ? AND checkedStatus = 'Checked Out' ORDER BY changeTime DESC LIMIT 1",
                             (str(housing), int(room), int(key)))
             last_checkout_time = audit_c.fetchone()[0]
+            #last_checkout_str = last_checkout_time.strftime("%Y-%m-%d %H:%M:%S")
             error_message = f"The key for building {housing}, room number {room}, key number {key} is already checked out. It was last checked out on {last_checkout_time}. Please pick another key."
             return render_template('keys.html', error=error_message)
         # If the user is trying to check in a key that is already checked in
@@ -423,12 +422,20 @@ def confirm():
                       (status, str(housing), int(room), int(key)))
             conn.commit()
             conn.close()
-    audit_conn.commit()
-    audit_conn.close()
 
-    # Render a new template or return the selection as a response
+            # Connect to audit.db
+            audit_conn = sqlite3.connect('audit.db')
+            audit_c = audit_conn.cursor()
 
-    return render_template('confirmation.html', housing=housing, room=room, key=key, status=status)
+            # Insert a record into audit.db
+            audit_c.execute("INSERT INTO audit VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                            (result[0], result[1], result[2], result[3], result[4], status, result[6], datetime.datetime.now()))
+            audit_conn.commit()
+            audit_conn.close()
+
+            # Redirect to the image capture page
+            return render_template('confirmation.html', housing=housing, room=room, key=key, status=status)
+
 
 
 # Main block to execute when this script is run
