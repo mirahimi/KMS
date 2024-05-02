@@ -410,11 +410,11 @@ def confirm():
                             (str(housing), int(room), int(key)))
             last_checkout_time = audit_c.fetchone()[0]
             #last_checkout_str = last_checkout_time.strftime("%Y-%m-%d %H:%M:%S")
-            error_message = f"The key for building {housing}, room number {room}, key number {key} is already checked out. It was last checked out on {last_checkout_time}. Please pick another key."
+            error_message = f"The key for {housing}, Room #{room}, Key #{key} is already checked out. It was last checked out on {last_checkout_time}. Please pick another key."
             return render_template('keys.html', error=error_message)
         # If the user is trying to check in a key that is already checked in
         elif result[5] == 'Checked In' and status == 'Checked In':
-            error_message = f"The key for building {housing}, room number {room}, key number {key} is already checked in. Please pick another key."
+            error_message = f"The key for {housing}, Room #{room}, Key #{key} is already checked in! Please pick another key."
             return render_template('keys.html', error=error_message)
         else:
             # Update the checkedStatus in keys.db
