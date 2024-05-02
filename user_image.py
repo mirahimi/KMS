@@ -22,12 +22,12 @@ def create_table(conn, create_table_sql):
 
 def insert_image(conn, user_images):
     """ insert an image into the user_img table """
-    sql = ''' INSERT INTO user_img("User Image", "Key Image")
-              VALUES(?, ?) '''
+    sql = ''' INSERT INTO user_img("User Image")
+              VALUES(?) '''
     cur = conn.cursor()
     with open(user_images, 'rb') as f:
         image_blob = f.read()
-    cur.execute(sql, (sqlite3.Binary(image_blob), None))  # Set the "Key Image" to None for now
+    cur.execute(sql, (sqlite3.Binary(image_blob),))
     conn.commit()
     return cur.lastrowid
 
@@ -63,8 +63,7 @@ def capture_user_image():
             if conn is not None:
                 create_table_sql = """ CREATE TABLE IF NOT EXISTS user_img (
                                         id INTEGER PRIMARY KEY,
-                                        "User Image" BLOB NOT NULL,
-                                        "Key Image" BLOB
+                                        "User Image" BLOB NOT NULL
                                     ); """
                 create_table(conn, create_table_sql)
                 with conn:
