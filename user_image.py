@@ -20,7 +20,6 @@ def create_table(conn, create_table_sql):
     except Error as e:
         print(e)
 
-
 # Insert an image into the user_img table
 def insert_image(conn, user_images):
     sql = ''' INSERT INTO user_img("User Image")

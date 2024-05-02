@@ -3,8 +3,8 @@ import os
 import sqlite3
 from sqlite3 import Error
 
+# Create a database connection to the SQLite database specified by db_file
 def create_connection(db_file):
-    """ create a database connection to the SQLite database specified by db_file """
     conn = None
     try:
         conn = sqlite3.connect(db_file)
@@ -12,23 +12,22 @@ def create_connection(db_file):
         print(e)
     return conn
 
+# Create a table from the create_table_sql statement
 def create_table(conn, create_table_sql):
-    """ create a table from the create_table_sql statement """
     try:
         c = conn.cursor()
         c.execute(create_table_sql)
     except Error as e:
         print(e)
 
-def insert_image(conn, key_images, user_images):
-    """ insert an image into the user_img table """
-    sql = ''' INSERT INTO user_img("User Image", "Key Image")
-              VALUES(?, ?) '''
+# Insert an image into the key_img table
+def insert_image(conn, key_images):
+    sql = ''' INSERT INTO key_img("Key Image")
+              VALUES(?) '''
     cur = conn.cursor()
-    with open(user_images, 'rb') as f1, open(key_images, 'rb') as f2:
-        user_image_blob = f1.read()
-        key_image_blob = f2.read()
-    cur.execute(sql, (sqlite3.Binary(user_image_blob), sqlite3.Binary(key_image_blob)))
+    with open(key_images, 'rb') as f:
+        image_blob = f.read()
+    cur.execute(sql, (sqlite3.Binary(image_blob),))
     conn.commit()
     return cur.lastrowid
 
@@ -52,27 +51,23 @@ def capture_key_image():
 
         # Break the loop if 'q' is pressed
         if cv2.waitKey(1) & 0xFF == ord('q'):
-            user_filename = f'u_img{count}.jpg'
-            key_filename = f'k_img{count}.jpg'
-            while os.path.exists(user_filename) or os.path.exists(key_filename):
+            filename = f'k_img{count}.jpg'
+            while os.path.exists(filename):
                 count += 1
-                user_filename = f'u_img{count}.jpg'
-                key_filename = f'k_img{count}.jpg'
-            # Save the images
-            cv2.imwrite(user_filename, frame)
-            cv2.imwrite(key_filename, frame)
+                filename = f'k_img{count}.jpg'
+            # Save the image
+            cv2.imwrite(filename, frame)
             
-            # Store the images in the database
+            # Store the image in the database
             conn = create_connection("audit.db")
             if conn is not None:
-                create_table_sql = """ CREATE TABLE IF NOT EXISTS user_img (
+                create_table_sql = """ CREATE TABLE IF NOT EXISTS key_img (
                                         id INTEGER PRIMARY KEY,
-                                        "User Image" BLOB NOT NULL,
                                         "Key Image" BLOB NOT NULL
                                     ); """
                 create_table(conn, create_table_sql)
                 with conn:
-                    insert_image(conn, key_filename, user_filename)
+                    insert_image(conn, filename)
             else:
                 print("Error! Cannot create the database connection.")
                 
