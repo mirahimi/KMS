@@ -3,8 +3,8 @@ import os
 import sqlite3
 from sqlite3 import Error
 
+# Create a database connection to the SQLite database specified by db_file
 def create_connection(db_file):
-    """ create a database connection to the SQLite database specified by db_file """
     conn = None
     try:
         conn = sqlite3.connect(db_file)
@@ -12,16 +12,17 @@ def create_connection(db_file):
         print(e)
     return conn
 
+# Create a table from the create_table_sql statement
 def create_table(conn, create_table_sql):
-    """ create a table from the create_table_sql statement """
     try:
         c = conn.cursor()
         c.execute(create_table_sql)
     except Error as e:
         print(e)
 
+
+# Insert an image into the user_img table
 def insert_image(conn, user_images):
-    """ insert an image into the user_img table """
     sql = ''' INSERT INTO user_img("User Image")
               VALUES(?) '''
     cur = conn.cursor()
