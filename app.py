@@ -83,8 +83,8 @@ def create_key_table():
         conn.commit()
     conn.close()
 
-# MULTIPLE KEY FUNCTIONS
-# Functions: Insert keys into the database
+# Multiple Functions: Insert All Dorm keys into the database
+
 def insert_kw_keys():
     conn = sqlite3.connect('keys.db')
     c = conn.cursor()
@@ -305,16 +305,6 @@ def create_audit_table():
 # WEB FUNCTIONS ONLY
 #-----------------------------------//
 
-# def get_building_code_and_key_code(housing, room):
-#     # Get the building code from the mapping
-#     buildingCode = BUILDING_CODES[housing]
-
-#     # Calculate the key code based on the room number
-#     # Assuming room numbers start from 100 and key codes start from 300, 400, etc.
-#     keyCode = (int(room) - 100) + 300 + (100 * (list(BUILDING_CODES.keys()).index(housing)))
-
-#     return buildingCode, keyCode
-
 # Route for Login Page
 @app.route('/')
 def login_page():
@@ -364,13 +354,13 @@ def pin_page():
             return redirect('/pin')              # If Invalid Credentials, redirect to the Pin Page
     else:
         return render_template('pin_page.html')  # If it's a GET request, render the PIN Page
-    
 
-
+# Route to render Keys HTML page
 @app.route('/keys')
 def keys_page():
         return render_template('keys.html')    
 
+# Route to render Pictures HTML page
 @app.route('/pictures')
 def pictures():
         return render_template('pictures.html')    
@@ -389,6 +379,7 @@ def capture_key_image():
     os.system("python key_image.py")
     return "Key image captured successfully."
 
+# Route to Confirm Choice
 @app.route('/confirm', methods=['POST'])
 def confirm():
     housing = request.form['housing']
@@ -398,10 +389,6 @@ def confirm():
 
     print(f"Housing: {housing}, Room: {room}, Key: {key}, Status: {status}")
     
-    # # Get the buildingCode and keyCode based on the housing and room
-    # buildingCode, keyCode = get_building_code_and_key_code(housing, room)
-    # print(f"Building Code: {buildingCode}")
-
     # Update keys.db and audit.db
     conn = sqlite3.connect('keys.db')
     c = conn.cursor()
@@ -444,7 +431,6 @@ def confirm():
     return render_template('confirmation.html', housing=housing, room=room, key=key, status=status)
 
 
-
 # Main block to execute when this script is run
 if __name__ == '__main__':
     create_user_table()                          # Create user table if it doesn't exist
@@ -464,8 +450,4 @@ if __name__ == '__main__':
     insert_sw_keys()
 
     app.run(debug=True)                          # Run Flask App in Debug Mode
-
-
-
-
     

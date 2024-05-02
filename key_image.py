@@ -20,14 +20,15 @@ def create_table(conn, create_table_sql):
     except Error as e:
         print(e)
 
-def insert_image(conn, key_images):
-    """ insert an image into the images table """
-    sql = ''' INSERT INTO images("Key Image")
-              VALUES(?) '''
+def insert_image(conn, key_images, user_images):
+    """ insert an image into the user_img table """
+    sql = ''' INSERT INTO user_img("User Image", "Key Image")
+              VALUES(?, ?) '''
     cur = conn.cursor()
-    with open(key_images, 'rb') as f:
-        image_blob = f.read()
-    cur.execute(sql, (sqlite3.Binary(image_blob),))
+    with open(user_images, 'rb') as f1, open(key_images, 'rb') as f2:
+        user_image_blob = f1.read()
+        key_image_blob = f2.read()
+    cur.execute(sql, (sqlite3.Binary(user_image_blob), sqlite3.Binary(key_image_blob)))
     conn.commit()
     return cur.lastrowid
 
@@ -51,23 +52,27 @@ def capture_key_image():
 
         # Break the loop if 'q' is pressed
         if cv2.waitKey(1) & 0xFF == ord('q'):
-            filename = f'k_img{count}.jpg'
-            while os.path.exists(filename):
+            user_filename = f'u_img{count}.jpg'
+            key_filename = f'k_img{count}.jpg'
+            while os.path.exists(user_filename) or os.path.exists(key_filename):
                 count += 1
-                filename = f'k_img{count}.jpg'
-            # Save the image
-            cv2.imwrite(filename, frame)
+                user_filename = f'u_img{count}.jpg'
+                key_filename = f'k_img{count}.jpg'
+            # Save the images
+            cv2.imwrite(user_filename, frame)
+            cv2.imwrite(key_filename, frame)
             
-            # Store the image in the database
+            # Store the images in the database
             conn = create_connection("audit.db")
             if conn is not None:
-                create_table_sql = """ CREATE TABLE IF NOT EXISTS images (
+                create_table_sql = """ CREATE TABLE IF NOT EXISTS user_img (
                                         id INTEGER PRIMARY KEY,
+                                        "User Image" BLOB NOT NULL,
                                         "Key Image" BLOB NOT NULL
                                     ); """
                 create_table(conn, create_table_sql)
                 with conn:
-                    insert_image(conn, filename)
+                    insert_image(conn, key_filename, user_filename)
             else:
                 print("Error! Cannot create the database connection.")
                 
