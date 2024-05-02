@@ -84,7 +84,6 @@ def create_key_table():
     conn.close()
 
 # Multiple Functions: Insert All Dorm keys into the database
-
 def insert_kw_keys():
     conn = sqlite3.connect('keys.db')
     c = conn.cursor()
@@ -341,7 +340,6 @@ def register():
         # Handle GET request, maybe render a registration form here
         return render_template('registration_page.html')
 
-
 # Route for handling Pin Credentials: 2nd Authentication
 @app.route('/pin', methods=['GET', 'POST'])
 def pin_page():
@@ -435,7 +433,6 @@ def confirm():
 
             # Redirect to the image capture page
             return render_template('confirmation.html', housing=housing, room=room, key=key, status=status)
-
 
 
 # Main block to execute when this script is run

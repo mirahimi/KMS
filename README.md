@@ -3,13 +3,6 @@
 ## Members: 
 * Chintan Mehta, Mierhamza Sly Rahimi
 
-## Folders :
-
-| Folder  | Description                     |
-| -------- | ------------------------------- |
-|   **Frontend** | [Frontend implementation](https://github.com/mirahimi/KMS/tree/main/Frontend) |
-
-
 ## Instructions
 
 1. Download and Unzip the [KMS](https://github.com/mirahimi/KMS/tree/main) directory. 
@@ -18,7 +11,6 @@
 4. Open the terminal and install Flask web-framework
     * **Command:** pip install flask
 5. Run the [app.py](https://github.com/mirahimi/KMS/blob/main/Frontend/app.py) file. Select *"Open in Browser"* Button.
-
 
 
 ## Declarations: 
