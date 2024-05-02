@@ -408,21 +408,21 @@ def confirm():
     if result is not None:
         # If the user is trying to check out a key that is already checked out
         if result[5] == 'Checked Out' and status == 'Checked Out':
-            # Fetch the last checkout time from audit.db
             audit_c.execute("SELECT changeTime FROM audit WHERE building = ? AND roomNum = ? AND keyNum = ? AND checkedStatus = 'Checked Out' ORDER BY changeTime DESC LIMIT 1",
                             (str(housing), int(room), int(key)))
             last_checkout_time = audit_c.fetchone()[0]
-            return f"The key for building {housing}, room number {room}, key number {key} is already checked out. It was last checked out on {last_checkout_time}."
+            error_message = f"The key for building {housing}, room number {room}, key number {key} is already checked out. It was last checked out on {last_checkout_time}. Please pick another key."
+            return render_template('keys.html', error=error_message)
+        # If the user is trying to check in a key that is already checked in
+        elif result[5] == 'Checked In' and status == 'Checked In':
+            error_message = f"The key for building {housing}, room number {room}, key number {key} is already checked in. Please pick another key."
+            return render_template('keys.html', error=error_message)
         else:
-        # Update the checkedStatus in keys.db and insert a record into audit.db
-            print(f"Status: {status}")
+            # Update the checkedStatus in keys.db
             c.execute("UPDATE keys SET checkedStatus = ? WHERE building = ? AND roomNum = ? AND keyNum = ?",
                       (status, str(housing), int(room), int(key)))
-            audit_c.execute("INSERT INTO audit VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                            (result[0], result[1], result[2], result[3], result[4], status, result[6], datetime.datetime.now()))
-
-    conn.commit()
-    conn.close()
+            conn.commit()
+            conn.close()
     audit_conn.commit()
     audit_conn.close()
 

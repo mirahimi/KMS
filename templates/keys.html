@@ -70,6 +70,12 @@
         </div>
 
         <div class="middle">
+
+            <div id="error-message" style="color:red">
+                <!-- Checked Out Message -->
+                {{error}}
+            </div>
+
             <form action="/confirm" method="post">
                 <label for="housingOptions">Select Building:</label>
                 <select id="housingOptions" name="housing">
